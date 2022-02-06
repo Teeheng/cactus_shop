@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+	<h3> สินค้าทั้งหมด </h3>
+	<div class="container-fluid">
+		<div class="row">
+		{% for pd in product %}
+			<div class="col-sm-4">
+				<div class="card" style="width:300px; height: 500px">
+					{% if pd.image %}
+						<img class="card-img-top" src="{{pd.image.url}}" width="400" style="width:300; height: 200px; overflow: hidden;">
+					{% elif pd.imageurl != None %}
+						<img class="card-img-top" src="{{pd.imageurl}}" width="400" style="width:300; height: 200px; overflow: hidden;">
+					{% else %}
+						<img class="card-img-top" src="/media/photo/default.png" width="400" style="width:300; height: 200px; overflow: hidden;">
+					{% endif %}
+					
+					<div class="card-body">
+						<h1 class='card-title'>{{pd.name}}</h1>
+						<p>ราคา{{pd.price}} บาท/{{pd.unit}}</p>
+						<p>{{pd.detail|linebreaks|truncatechars_html:50}}</p>
+
+						{% if pd.quantity > 0 %}
+							<p>สินค้ามีในstock: {{pd.quantity}} {{pd.unit}}</p>
+						{% else %}
+							<p><font color="red">สินค้าอาจจะหมด ติดต่อ admin  </font></p>				
+						{% endif %}
+
+						{% if pd.instock == True %}
+							{% if user.is_authenticated %}
+								<a href="{% url 'addtocart' pd.id %}" class="btn btn-success">สั่งซื้อ</a>
+							{% else %}
+								<a href="{% url 'login' %}" class="btn btn-success" >สั่งซื้อ</a>
+							{% endif %}
+
+						{% else %}
+							<a href="#" class="btn btn-warning">สินค้าหมด</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>	
+			<br><br>
+		{% endfor %}
+		</div>
+	</div>
+	
+	  
+
+{% endblock %}

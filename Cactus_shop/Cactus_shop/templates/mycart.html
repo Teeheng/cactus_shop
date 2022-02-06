@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+
+{% if status == 'delete' %}
+<div class = "alert alert-danger">
+    <strong>ลบแล้ว</strong> หากต้องการสินค้า กรุณากดสั่งซื้อใหม่
+</div>
+{% endif %}
+<br>
+
+<div class="container">
+    <h2> ตระกร้าสินค้า </h2>
+    <table class ="table">
+        <thead>
+            <tr>
+                <th>เวลาสั่งซื้อล่าสุด</th>
+                <th>รหัส</th>
+                <th>สินค้า</th>
+                <th>ราคา</th>
+                <th>จำนวน</th>
+                <th>รวมยอด</th>
+                <th>ลบ</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for pd in mycart %}
+            <tr>
+                <td>{{pd.stamp}}</td>
+                <td>{{pd.productid}}</td>
+                <td>{{pd.productname}}</td>
+                <td>{{pd.price}}</td>
+                <td>{{pd.quantity}}</td>
+                <td>{{pd.total|intcomma}}</td>
+                <th>
+                <form method="POST" id="form{{pd.productid}}" onsubmit="return confirm('ยืนยันการลบใช่หรือไม่');">    
+                    {% csrf_token %}
+                    <input type="hidden" name="productid" value="{{pd.productid}}">
+                    <button type="submit" form="form{{pd.productid}}" class="btn btn-danger">ลบ</button>
+                </form>
+                </th>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td><h4>Total</h4></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><h4>{{count|intcomma}}</h4></td>
+            <td><h4>{{total|intcomma}}</h4></td>
+        </tr>
+        </tbody>
+    </table>
+    <a href  = "{% url 'MyCartEdit' %}" class="btn btn-primary">แก้ไขจำนวนสินค้า</a>
+    <div style='padding: 15px;'></div>
+    <a href  = "#" class="btn btn-success">Checkout</a>
+</div>
+{% endblock %}
